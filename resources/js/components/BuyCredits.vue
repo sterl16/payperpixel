@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { type SharedData } from '@/types';
+import { exactUsd } from '@/lib/pricing';
 import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -18,7 +19,7 @@ function buy(amount: number) {
     <div class="flex flex-wrap items-center gap-3 rounded-xl border p-4">
         <div>
             <div class="text-xs uppercase text-muted-foreground">Balance</div>
-            <div class="text-2xl font-semibold tabular-nums">${{ Number(page.props.balance ?? 0).toFixed(4) }}</div>
+            <div class="text-2xl font-semibold tabular-nums">{{ exactUsd(page.props.balance ?? '0.000000000') }}</div>
         </div>
         <div class="ml-auto flex items-center gap-2">
             <span class="text-sm text-muted-foreground">Buy credits</span>

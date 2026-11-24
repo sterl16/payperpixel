@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { formatUsd, usdToNanos } from '@/lib/pricing';
+import { exactUsd, usdToNanos } from '@/lib/pricing';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -26,7 +26,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Admin report', href: '/admin/re
 const start = ref(props.start);
 const end = ref(props.end);
 
-const usd = (v: string) => formatUsd(usdToNanos(v), 6);
+const usd = exactUsd;
 const matches = (d: { cost: string; pixelforge_cost: string | null }) => d.pixelforge_cost !== null && usdToNanos(d.cost) === usdToNanos(d.pixelforge_cost);
 
 function apply() {
@@ -63,9 +63,9 @@ function apply() {
                             <td class="p-3">{{ d.date }}</td>
                             <td class="p-3 text-right">{{ d.generations }}</td>
                             <td class="p-3 text-right">{{ usd(d.charged) }}</td>
-                            <td class="p-3 text-right">{{ d.cost }}</td>
+                            <td class="p-3 text-right">{{ usd(d.cost) }}</td>
                             <td class="p-3 text-right" :class="d.pixelforge_cost === null ? 'text-muted-foreground' : matches(d) ? 'text-green-700 dark:text-green-400' : 'text-red-600'">
-                                {{ d.pixelforge_cost ?? 'n/a' }} <span v-if="d.pixelforge_cost !== null">{{ matches(d) ? '✓' : '≠' }}</span>
+                                {{ d.pixelforge_cost === null ? 'n/a' : usd(d.pixelforge_cost) }} <span v-if="d.pixelforge_cost !== null">{{ matches(d) ? '✓' : '≠' }}</span>
                             </td>
                             <td class="p-3 text-right">{{ usd(d.profit) }}</td>
                         </tr>
@@ -85,7 +85,7 @@ function apply() {
                             <td class="p-3">{{ u.name }} <span class="text-muted-foreground">{{ u.email }}</span></td>
                             <td class="p-3 text-right">{{ u.generations }}</td>
                             <td class="p-3 text-right">{{ usd(u.charged) }}</td>
-                            <td class="p-3 text-right">{{ u.cost }}</td>
+                            <td class="p-3 text-right">{{ usd(u.cost) }}</td>
                             <td class="p-3 text-right">{{ usd(u.profit) }}</td>
                         </tr>
                         <tr v-if="users.length === 0"><td colspan="5" class="p-3 text-center text-muted-foreground">No completed generations in this range.</td></tr>

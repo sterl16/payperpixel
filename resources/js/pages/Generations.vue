@@ -2,7 +2,7 @@
 import BuyCredits from '@/components/BuyCredits.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { formatUsd, usdToNanos } from '@/lib/pricing';
+import { exactUsd, formatUsd, usdToNanos } from '@/lib/pricing';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage, usePoll } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
@@ -55,7 +55,8 @@ const badge: Record<Generation['status'], string> = {
 };
 
 const label = (s: Generation['status']) => (s === 'pending' ? 'submitting' : s);
-const usd = (v: string) => formatUsd(usdToNanos(v), 6);
+// estimate is a max so rounding it up is fine, actual charge shows exact
+const estimateUsd = (v: string) => formatUsd(usdToNanos(v));
 const expired = (g: Generation) => g.image_url_expires_at !== null && new Date(g.image_url_expires_at) < new Date();
 </script>
 
@@ -91,9 +92,9 @@ const expired = (g: Generation) => g.image_url_expires_at !== null && new Date(g
                         <p class="line-clamp-3" :title="g.prompt">{{ g.prompt }}</p>
                         <dl class="mt-auto grid grid-cols-2 gap-1 text-xs tabular-nums">
                             <dt class="text-muted-foreground">Estimated</dt>
-                            <dd class="text-right">up to {{ usd(g.estimated_charge) }}</dd>
+                            <dd class="text-right">up to {{ estimateUsd(g.estimated_charge) }}</dd>
                             <dt class="text-muted-foreground">Actual</dt>
-                            <dd class="text-right font-medium">{{ g.charge === null ? '—' : usd(g.charge) }}</dd>
+                            <dd class="text-right font-medium">{{ g.charge === null ? '—' : exactUsd(g.charge) }}</dd>
                         </dl>
                         <div class="text-xs text-muted-foreground">{{ new Date(g.created_at).toLocaleString() }}</div>
                     </div>

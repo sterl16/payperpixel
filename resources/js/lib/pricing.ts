@@ -59,6 +59,14 @@ export function estimate(table: PricingTable, markup: string, prompt: string, si
     return { tokens, provider, charge };
 }
 
+// exact amount from the server, all 9 decimals, e.g. "0.080478750" -> "$0.080478750"
+export function exactUsd(usd: string): string {
+    if (usd.startsWith('-')) {
+        return '-$' + usd.slice(1);
+    }
+    return '$' + usd;
+}
+
 export function usdToNanos(usd: string): bigint {
     return toScaled(usd, 9);
 }
